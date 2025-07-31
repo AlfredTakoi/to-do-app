@@ -1,28 +1,46 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { createItem } from '../api/item';
-import Navbar from '../components/Navbar';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getItem, updateItem } from "../api/item";
+import Navbar from "../components/Navbar";
 import { isLoggedIn } from '../utils/auth';
 
-export default function ItemCreate() {
-  const { id: checklistId } = useParams();
-  const [itemName, setItemName] = useState('');
-  const [error, setError] = useState('');
+export default function ItemEdit() {
+  const { checklistId, itemId } = useParams();
+  const [itemName, setItemName] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchItem = async () => {
     try {
-      await createItem(checklistId, { itemName });
-      navigate(`/checklists/${checklistId}`);
+      const res = await getItem(checklistId, itemId);
+      const item = res.data.data;
+      if (item) {
+        setItemName(item.name);
+      } else {
+        setError("Item tidak ditemukan");
+      }
     } catch (err) {
-      setError(err.message || 'Gagal menambahkan item');
+      setError("Gagal mengambil data item");
     }
   };
 
   useEffect(() => {
-    if (!isLoggedIn()) navigate("/login")
-  }, [])
+    if (!isLoggedIn()) {
+      navigate("/login")
+    } else {
+      fetchItem();
+    }
+  }, [checklistId, itemId]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateItem(checklistId, itemId, { itemName: itemName });
+      navigate(`/checklists/${checklistId}`);
+    } catch (err) {
+      setError(err.message || "Gagal menambahkan item");
+    }
+  };
 
   return (
     <>
@@ -32,7 +50,9 @@ export default function ItemCreate() {
           onSubmit={handleSubmit}
           className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm"
         >
-          <h2 className="text-xl font-bold mb-4 text-center">Tambah Item ke Checklist</h2>
+          <h2 className="text-xl font-bold mb-4 text-center">
+            Tambah Item ke Checklist
+          </h2>
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <input
             type="text"

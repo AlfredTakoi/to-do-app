@@ -4,6 +4,7 @@ import ChecklistLists from './pages/Checklists';
 import ChecklistCreate from './pages/ChecklistCreate';
 import ChecklistDetail from './pages/ChecklistDetail';
 import ItemCreate from './pages/ItemsCreate';
+import ItemEdit from './pages/ItemsEdit';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/checklists/new" element={<ChecklistCreate />} />
         <Route path="/checklists/:id" element={<ChecklistDetail />} />
         <Route path="/checklists/:id/items/new" element={<ItemCreate />} />
+        <Route path="/checklists/:checklistId/items/:itemId/edit" element={<ItemEdit />} />
       </Routes>
     </BrowserRouter>
     </>

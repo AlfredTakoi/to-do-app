@@ -22,9 +22,14 @@ export default function ChecklistDetail() {
     }
   };
 
-  const handleToggleStatus = async (itemId) => {
-    await toggleItemStatus(itemId);
-    fetchChecklist();
+  const handleToggleStatus = async (checklistId, itemId, itemCompletionStatus) => {
+    try {
+      await toggleItemStatus(checklistId, itemId, { itemCompletionStatus: !itemCompletionStatus });
+      alert("Status item berhasil diupdate")
+      fetchChecklist();
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
   const handleDeleteItem = async (checklistId, itemId) => {
@@ -87,7 +92,7 @@ export default function ChecklistDetail() {
                   <input
                     type="checkbox"
                     checked={item.itemCompletionStatus}
-                    onChange={() => handleToggleStatus(item.id)}
+                    onChange={() => handleToggleStatus(id, item.id, item.itemCompletionStatus)}
                   />
                   <span
                     className={`cursor-pointer ${
@@ -98,12 +103,20 @@ export default function ChecklistDetail() {
                     {item.name}
                   </span>
                 </div>
-                <button
-                  onClick={() => handleDeleteItem(id, item.id)}
-                  className="text-red-500 text-sm hover:underline"
-                >
-                  Hapus
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`items/${item.id}/edit`)}
+                    className="text-orange-500 text-sm hover:underline"
+                  >
+                    Ubah
+                  </button>
+                  <button
+                    onClick={() => handleDeleteItem(id, item.id)}
+                    className="text-red-500 text-sm hover:underline"
+                  >
+                    Hapus
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

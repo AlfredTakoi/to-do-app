@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { register } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
+import { isLoggedIn } from '../utils/auth';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,6 +23,12 @@ export default function Register() {
       setError(error.message);
     }
   }
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      navigate("/checklists")
+    }
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
